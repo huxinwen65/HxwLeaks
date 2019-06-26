@@ -9,6 +9,7 @@ UIViewController是我们在iOS开发中用的最频繁的类，是一个iOS app
 原理分析：
 
 dispatch_after这个是GCD提供的一个延时处理事物的方式，只需要将延时的任务放到block中，设置好时长即可，而我们将一个弱引用对象放到block中，不会影响对象的释放，就有如下的代码：
+```
 ///延时处理，如果释放，不会走 [strongSelf showMsg:msg];
 - (void) willDealloc{
     __weak typeof(self) weakSelf = self;
@@ -20,9 +21,10 @@ dispatch_after这个是GCD提供的一个延时处理事物的方式，只需要
         }
     });
 }
-
+```
 延时任务
 通常情况下，UIViewController的释放都是在被UINavigationController pop或者presenter出来后自身dismiss这两个时机后，而且一定会走viewDidDisappear这个方法，但是不是所有的viewWillDisappear都是这两个时机，所以需要区分标记。
+```
 /**
  标记是否是从控制器栈中移除，准备释放
  */
@@ -79,3 +81,4 @@ UIViewController(HxwLeak)  dismiss时机及处理延时任务
         [self willDealloc];
     }
 }
+```
